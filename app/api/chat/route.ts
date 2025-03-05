@@ -1,10 +1,7 @@
 import { kv } from "@vercel/kv";
 import { Ratelimit } from "@upstash/ratelimit";
 import { OpenAI } from "openai";
-import {
-  OpenAIStream,
-  StreamingTextResponse,
-} from "ai";
+import { OpenAIStream, StreamingTextResponse } from "ai";
 import { functions, runFunction } from "./functions";
 
 // Create an OpenAI API client (that's edge friendly!)
@@ -46,7 +43,7 @@ export async function POST(req: Request) {
 
   // check if the conversation requires a function call to be made
   const initialResponse = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo-0613",
+    model: "gpt-4o-mini",
     messages,
     stream: true,
     functions,
@@ -61,7 +58,7 @@ export async function POST(req: Request) {
       const result = await runFunction(name, args);
       const newMessages = createFunctionCallMessages(result);
       return openai.chat.completions.create({
-        model: "gpt-3.5-turbo-0613",
+        model: "gpt-4o-mini",
         stream: true,
         messages: [...messages, ...newMessages],
       });
